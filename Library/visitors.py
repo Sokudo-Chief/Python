@@ -34,7 +34,7 @@ def insert(records):
         print('База данных подключена.')
 
         insert_query = '''INSERT INTO visitors (number, vis_name, surname, adress)
-                            VALUES (?, ?, ?, ?);'''               
+                            VALUES (?, ?, ?, ?);'''              
         cursor.executemany(insert_query, records)
         sqlite_connection.commit()
         print('Запись успешно добавлена.')
@@ -103,10 +103,10 @@ def recordNumber(number):
         cursor = sqlite_connection.cursor()
 
         sqlite_selection_query = "SELECT * FROM visitors WHERE number=?;"
-        cursor.execute(sqlite_selection_query, (number,))
+        cursor.execute(sqlite_selection_query, number)
         record = cursor.fetchone()
         cursor.close()
-        return record[0[0]]
+        return record[0][0]
     except sqlite3.Error as error:
         print("Не удалось выбрать данные из таблицы.", error)
     finally:
@@ -187,15 +187,15 @@ def recordNumber(number):
 
 # ================================== Удаление ====================================
 
-def delete(id):
+def delete(num):
     try:
         sqlite_connection = sqlite3.connect('library.db')
         cursor = sqlite_connection.cursor()
 
-        sqlite_delete_query = "DELETE FROM visitors WHERE id=?;"
-        cursor.execute(sqlite_delete_query, (id,))
+        sqlite_delete_query = "DELETE FROM visitors WHERE number=?;"
+        cursor.execute(sqlite_delete_query, (num,))
         sqlite_connection.commit()
-        print("Запись", id, "успешна удалена.")
+        print("Запись", num, "успешна удалена.")
         cursor.close()
     except sqlite3.Error as error:
         print("Не удалось выбрать данные из таблицы.", error)
@@ -206,13 +206,13 @@ def delete(id):
 
 # ================================== Изменение номера ====================================
 
-def updateNumber(number, id):
+def updateNumber(number, new_number):
     try:
         sqlite_connection = sqlite3.connect("library.db")
         cursor = sqlite_connection.cursor()
 
-        sqlite_selection_query = "UPDATE visitors SET number=? WHERE ID=?;"
-        cursor.execute(sqlite_selection_query, (number, id))
+        sqlite_selection_query = "UPDATE visitors SET number=? WHERE number=?;"
+        cursor.execute(sqlite_selection_query, (number, new_number))
         sqlite_connection.commit()
         print("Запись", id, "успешна обновлена.")
         cursor.close
@@ -271,6 +271,25 @@ def updateAdress(adress, id):
         cursor.execute(sqlite_selection_query, (adress, id))
         sqlite_connection.commit()
         print("Запись", id, "успешна обновлена.")
+        cursor.close
+        
+    except sqlite3.Error as error:
+        print("Не удалось изменить данные из таблицы.", error)
+    finally:
+        if sqlite_connection:
+            sqlite_connection.close()
+
+# ================================== Изменение данных ====================================
+
+def update(number, vis_name, surname, adress):
+    try:
+        sqlite_connection = sqlite3.connect("library.db")
+        cursor = sqlite_connection.cursor()
+
+        sqlite_selection_query = "UPDATE visitors SET vis_name=?, surname=?, adress=? WHERE number=?;"
+        cursor.execute(sqlite_selection_query, (vis_name, surname, adress, number))
+        sqlite_connection.commit()
+        print("Запись", number, "успешна обновлена.")
         cursor.close
         
     except sqlite3.Error as error:

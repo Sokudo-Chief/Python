@@ -1,6 +1,6 @@
 import sqlite3
-import visitors
-import books
+import visitors as v
+import books as b
 
 # ================================== Айди ====================================
 
@@ -22,10 +22,26 @@ def maxID():
         if sqlite_connection:
             sqlite_connection.close()
 
+# ================================== Добавление книги ====================================
+
+def delete(id):
+    try:
+        sqlite_connection = sqlite3.connect('library.db')
+        cursor = sqlite_connection.cursor()
+
+        insert_query = "DELETE FROM logs WHERE id=?;"
+        cursor.execute(insert_query, (id,))
+        sqlite_connection.commit()
+        cursor.close()
+    except sqlite3.Error as error:
+        print("Не удалось выбрать данные из таблицы.", error)
+    finally:
+        if sqlite_connection:
+            sqlite_connection.close()
 
 # ================================== Добавление книги ====================================
 
-def addBook(book_id, visitor_number: tuple):
+def addBook(book_id: tuple, visitor_number: tuple):
     try:
         sqlite_connection = sqlite3.connect('library.db')
         cursor = sqlite_connection.cursor()
@@ -34,7 +50,8 @@ def addBook(book_id, visitor_number: tuple):
         cursor.execute(insert_query, (maxID()+1, book_id[0], visitor_number[0][0]))
         sqlite_connection.commit()
         cursor.close()
-        print("Книга", book_id[1], "для посетителя", visitor_number[0][1], "успешна добавлена.")
+        # print("Книга", book_id[1], "для посетителя", visitor_number[0][1], "успешна добавлена.")
+        print("Книга добавлена к посетителю")
     except sqlite3.Error as error:
         print("Не удалось выбрать данные из таблицы.", error)
     finally:
@@ -79,3 +96,6 @@ def selectLogs(visitor: tuple):
     finally:
         if sqlite_connection:
             cursor.close()
+
+
+# print(selectLogs(v.recordNumber(333)))

@@ -109,6 +109,6 @@ def script(name_file):
 # print(visitors.recordNumber(222))
 # print(books.recordID(5))
 
-# logs.addBook(books.recordID(12), visitors.recordNumber(555))
+logs.addBook(books.recordID(13)[0], visitors.recordNumber(111))
 
-print(logs.selectLogs(visitors.recordNumber(333)))
+# print(logs.selectLogs(visitors.recordNumber(333)))

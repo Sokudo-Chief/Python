@@ -1,5 +1,43 @@
 import sqlite3
 
+# ================================== Удаление записи ====================================
+
+def delete(id):
+    try:
+        sqlite_connection = sqlite3.connect('library.db')
+        cursor = sqlite_connection.cursor()
+
+        sqlite_delete_query = "DELETE FROM books WHERE id=?;"
+        cursor.execute(sqlite_delete_query, (id,))
+        sqlite_connection.commit()
+        print("Запись", id, "успешна удалена.")
+        cursor.close()
+    except sqlite3.Error as error:
+        print("Не удалось выбрать данные из таблицы.", error)
+    finally:
+        if sqlite_connection:
+            sqlite_connection.close()
+            print("Соединение с SQLite закрыто")
+
+# ==================================  ====================================
+
+def selectBooks(book: tuple):
+    try:
+        sqlite_connection = sqlite3.connect("library.db")
+        cursor = sqlite_connection.cursor()
+
+        select_query = '''SELECT id, vis_name, surname, adress, book_id FROM books'''
+
+        cursor.execute(select_query, (book[0][0],))
+        record = cursor.fetchall()
+        cursor.close()
+        return record
+    except sqlite3.Error as error:
+        print("При выполнении возникла ошибка:", error)
+    finally:
+        if sqlite_connection:
+            cursor.close()
+
 # ================================== Создание таблицы ====================================
 
 def createTable():
@@ -33,7 +71,7 @@ def recordID(id):
 
         sqlite_selection_query = "SELECT * FROM books WHERE id=?;"
         cursor.execute(sqlite_selection_query, (id,))
-        record = cursor.fetchone()
+        record = cursor.fetchall()
         cursor.close()
         return record
     except sqlite3.Error as error:
@@ -104,15 +142,16 @@ def recordName(name):
 
 # ================================== Вставка ====================================
 
-def insert(records):
+def insert(name: str, author: str, toms: int):
     try:
         sqlite_connection = sqlite3.connect('library.db')
         cursor = sqlite_connection.cursor()
         print('База данных подключена.')
 
         insert_query = '''INSERT INTO books (id, name, author, toms)
-                            VALUES (?, ?, ?, ?);'''               
-        cursor.executemany(insert_query, records)
+                            VALUES (?, ?, ?, ?);''' 
+        data_tuple = (maxID() + 1, name, author, toms)              
+        cursor.execute(insert_query, data_tuple)
         sqlite_connection.commit()
         print('Запись успешно добавлена.')
         cursor.close()
@@ -164,11 +203,10 @@ def maxID():
 
 # ================================== Вывод ====================================
 
-def printV(records):
+def printB(records):
     try:
         for record in records:
             print()
-            print("ID:", record[0])
             print("Name:", record[1])
             print("Author:", record[2])
             print("Toms:", record[3])
@@ -209,6 +247,25 @@ def SelectTable():
         return record
     except sqlite3.Error as error:
         print("Не удалось выбрать данные из таблицы.", error)
+    finally:
+        if sqlite_connection:
+            sqlite_connection.close()
+
+# ================================== Изменение данных ====================================
+
+def update(id, name, author, toms):
+    try:
+        sqlite_connection = sqlite3.connect("library.db")
+        cursor = sqlite_connection.cursor()
+
+        sqlite_selection_query = "UPDATE books SET name=?, author=?, toms=? WHERE id=?;"
+        cursor.execute(sqlite_selection_query, (name, author, toms, id))
+        sqlite_connection.commit()
+        print("Запись", id, "успешна обновлена.")
+        cursor.close
+        
+    except sqlite3.Error as error:
+        print("Не удалось изменить данные из таблицы.", error)
     finally:
         if sqlite_connection:
             sqlite_connection.close()
