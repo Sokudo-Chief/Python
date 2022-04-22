@@ -7,7 +7,7 @@ import books as b
 import logs as l
 import visitors as v
 
-API_TOKEN = '5139167255:AAH2Us5ha8MxcrW-UTaetjk-oxgVcqlVagw'
+API_TOKEN = ''
 
 logging.basicConfig(level=logging.INFO)
 
